@@ -1,11 +1,8 @@
 import Select from 'antd/es/select';
 import { useCallback, useMemo, useState } from 'react';
-// import { uniqBy } from 'lodash'; // Keep lodash removed
 import { Column, FilterFn, Table } from '@tanstack/react-table';
 import './multi-select-filter.less';
-// import { toTitleCase } from '../../../../utils/utils';
 import React from 'react';
-import { toTitleCase } from '../../utils';
 
 // Define interface for filter options
 interface FilterOption {
@@ -155,7 +152,7 @@ export const MultiSelectFilter = (
                     } else if (originalValue === true) {
                         label = 'Enabled';
                     } else {
-                        label = toTitleCase(String(originalValue));
+                        label = String(originalValue);
                     }
 
                     return {
