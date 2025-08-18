@@ -15,9 +15,7 @@ const classNames = {
 };
 
 const styles = {
-    root: {
-        zIndex: 101,
-    },
+    root: {},
 };
 
 export const ColumnWidget = ({ table }: ColumnWidgetProps) => {

@@ -170,7 +170,7 @@ const DetailPanelRowComponent = React.memo(
         useContainerDimensions(effectiveRef, setContainerDimensions, dimensionsRef);
 
         const detailPanelContentStyle = useMemo((): React.CSSProperties => {
-            const width = contentMeasurements.width ? contentMeasurements.width : '100%';
+            const width = contentMeasurements.width ? contentMeasurements.width - 5 : '100%';
             const maxHeight = contentMeasurements.height ? contentMeasurements.height : '100%';
             return {
                 width: `${width}px`,

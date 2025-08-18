@@ -2,6 +2,9 @@ import { useEffect, useRef, useCallback, useMemo } from 'react';
 import { VisibilityState, ColumnSizingState, Table, Column } from '@tanstack/react-table';
 import { isEqual } from 'lodash-es';
 
+// Special columns that should not be reordered by users
+const SPECIAL_COLUMNS = ['react-table-row-expand', 'react-table-row-select'] as const;
+
 interface UseTableConfigPersistenceProps {
     tableConfigKey?: string;
     enableTableConfigPersistence: boolean;
@@ -98,9 +101,14 @@ export const useTableConfigPersistence = ({
     // Function to get current table config
     const getCurrentTableConfig = useCallback(() => {
         const state = table.getState();
+        // Filter out special columns from columnOrder when saving
+        const userColumnOrder = state.columnOrder.filter(
+            (colId: string) => !SPECIAL_COLUMNS.includes(colId as any),
+        );
+
         return {
             columnVisibility: state.columnVisibility,
-            columnOrder: state.columnOrder,
+            columnOrder: userColumnOrder, // Only save user-reorderable columns
             columnSizing: state.columnSizing,
             columnPinning: state.columnPinning,
             columnSignatures: columnSignaturesMap,
@@ -113,6 +121,8 @@ export const useTableConfigPersistence = ({
 
         try {
             const savedConfig = localStorage.getItem(`table-config-${tableConfigKey}`);
+            if (!savedConfig) return;
+
             if (savedConfig) {
                 const config = JSON.parse(savedConfig);
                 const allColumnIds = allColumns.map((col) => col.id);
@@ -129,15 +139,16 @@ export const useTableConfigPersistence = ({
                             // Check if signature matches
                             if (columnSignaturesMap[colId] === signature) {
                                 validColumns.add(colId);
-                            } else {
-                                console.log(
-                                    `Column ${colId} structure has changed, not applying its saved configuration`,
-                                );
                             }
                         }
                     });
                 } else {
                     // For backward compatibility, if no signatures stored, just use all current columns
+                    allColumnIds.forEach((id) => validColumns.add(id));
+                }
+
+                // TEMPORARY: If no valid columns, try using all columns (bypass signature validation)
+                if (validColumns.size === 0) {
                     allColumnIds.forEach((id) => validColumns.add(id));
                 }
 
@@ -157,13 +168,40 @@ export const useTableConfigPersistence = ({
 
                 // Validate and apply saved column order if reordering is enabled
                 if (config.columnOrder) {
-                    const validatedOrder = config.columnOrder.filter((colId: string) =>
+                    // Filter out special columns from saved order (in case they were saved before our fix)
+                    const savedOrderWithoutSpecialCols = config.columnOrder.filter(
+                        (colId: string) => !SPECIAL_COLUMNS.includes(colId as any),
+                    );
+
+                    const validatedOrder = savedOrderWithoutSpecialCols.filter((colId: string) =>
                         validColumns.has(colId),
                     );
 
                     // Only apply if we have valid columns
                     if (validatedOrder.length > 0) {
-                        table.setColumnOrder(validatedOrder);
+                        // Preserve expand and select columns in their fixed positions
+                        // Based on useEnhancedColumns: select is added first (unshift), then expand (unshift)
+                        // So the correct order should be: expand, select, ...other columns
+                        const allColumnIds = table.getAllLeafColumns().map((col) => col.id);
+                        // Get special columns that actually exist in the table (in their correct order)
+                        // The correct order is: expand first, then select (based on unshift order in useEnhancedColumns)
+                        const existingSpecialColumns: string[] = [];
+                        if (allColumnIds.includes('react-table-row-expand')) {
+                            existingSpecialColumns.push('react-table-row-expand');
+                        }
+                        if (allColumnIds.includes('react-table-row-select')) {
+                            existingSpecialColumns.push('react-table-row-select');
+                        }
+
+                        // Filter out special columns from the validated order (user shouldn't be able to reorder them)
+                        const reorderableColumns = validatedOrder.filter(
+                            (colId: string) => !SPECIAL_COLUMNS.includes(colId as any),
+                        );
+
+                        // Combine: special columns first (in correct order), then user-reorderable columns
+                        const finalOrder = [...existingSpecialColumns, ...reorderableColumns];
+
+                        table.setColumnOrder(finalOrder);
                     }
                 }
 

@@ -25,7 +25,7 @@ const TextCellComponent = <TData extends RowData, TValue>(props: TextCellProps<T
                 title: value,
                 destroyTooltipOnHide: true,
                 getPopupContainer,
-                autoAdjustOverflow: false,
+                autoAdjustOverflow: true,
                 overlayStyle: {
                     maxWidth: '400px',
                     wordBreak: 'break-word' as const,

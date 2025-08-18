@@ -180,6 +180,7 @@ const ReactTable = ({
     className,
     isFullHeight = false,
     getParentMaskedPopupContainer,
+    size = 'md',
 }: ReactTableProps): React.JSX.Element => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -574,6 +575,9 @@ const ReactTable = ({
         'react-table-container-loading': shouldShowLoader,
         'react-virtualized-container': enableRowVirtualization,
         'react-table-container-full-height': isFullHeight,
+        'react-table-container-small': size === 'sm',
+        'react-table-container-medium': size === 'md',
+        'react-table-container-large': size === 'lg',
     });
 
     const tableClasses = classNames('react-table', {

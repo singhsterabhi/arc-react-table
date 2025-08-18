@@ -120,7 +120,15 @@ export const ColumnMenu: React.FC<ColumnMenuProps> = ({ table }) => {
     }, [allColumns, columnOrder]); // Depend on allColumns reference and the columnOrder value from state
     // console.log('orderedColumns', orderedColumns);
     // console.log('columnOrder', columnOrder);
-    const columnIds = useMemo(() => orderedColumns.map((col) => col.id), [orderedColumns]);
+    const columnIds = useMemo(
+        () =>
+            orderedColumns
+                .filter(
+                    (col) => !['react-table-row-select', 'react-table-row-expand'].includes(col.id),
+                )
+                .map((col) => col.id),
+        [orderedColumns],
+    );
 
     // --- Sensors for dnd-kit ---
     const sensors = useSensors(
@@ -149,11 +157,27 @@ export const ColumnMenu: React.FC<ColumnMenuProps> = ({ table }) => {
             const oldIndex = columnIds.indexOf(active.id as string);
             const newIndex = columnIds.indexOf(over.id as string);
             const newOrder = arrayMove(columnIds, oldIndex, newIndex);
-            // Filter out internal columns before setting order
-            const settableOrder = newOrder.filter(
-                (id) => !['react-table-row-select', 'react-table-row-expand'].includes(id),
-            );
-            table.setColumnOrder(settableOrder);
+
+            // Get special columns that exist in the table (in their correct order)
+            const allLeafColumns = table.getAllLeafColumns();
+            const allColumnIds = allLeafColumns.map((col) => col.id);
+            const specialColumns = ['react-table-row-expand', 'react-table-row-select'];
+
+            const existingSpecialColumns: string[] = [];
+            if (allColumnIds.includes('react-table-row-expand')) {
+                existingSpecialColumns.push('react-table-row-expand');
+            }
+            if (allColumnIds.includes('react-table-row-select')) {
+                existingSpecialColumns.push('react-table-row-select');
+            }
+
+            // Filter out special columns from the new order (user shouldn't be able to reorder them)
+            const reorderableColumns = newOrder.filter((id) => !specialColumns.includes(id));
+
+            // Combine: special columns first (in correct order), then user-reorderable columns
+            const finalOrder = [...existingSpecialColumns, ...reorderableColumns];
+
+            table.setColumnOrder(finalOrder);
         }
     };
 

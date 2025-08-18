@@ -219,6 +219,7 @@ export interface ReactTableProps {
     className?: string;
     isFullHeight?: boolean;
     getParentMaskedPopupContainer?: (triggerNode: HTMLElement) => HTMLElement;
+    size?: 'sm' | 'md' | 'lg';
 }
 
 export interface RenderDetailPanelProps {
