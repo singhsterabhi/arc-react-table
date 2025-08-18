@@ -1,14 +1,35 @@
 import dayjs from 'dayjs';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import { DateRange, RangeKeyDict } from 'react-date-range';
-import 'react-date-range/dist/styles.css';
-import 'react-date-range/dist/theme/default.css';
 import React, { useCallback, useMemo, useState } from 'react';
 import Popover from 'antd/es/popover';
 import Input from 'antd/es/input';
 import { Column, FilterFn, Table } from '@tanstack/react-table';
 import './date-filter.less';
+
+// Conditional imports for optional dependencies
+let DateRange: any;
+
+// Type definition for range selection
+interface RangeSelection {
+    startDate?: Date;
+    endDate?: Date;
+    key?: string;
+}
+
+interface RangeKeyDict {
+    [key: string]: RangeSelection;
+    selection: RangeSelection;
+}
+
+try {
+    const reactDateRange = require('react-date-range');
+    DateRange = reactDateRange.DateRange;
+    require('react-date-range/dist/styles.css');
+    require('react-date-range/dist/theme/default.css');
+} catch (e) {
+    // react-date-range is not available
+}
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -75,7 +96,7 @@ export const DateFilter = (): DateFilterProps => {
 
             const handlePopoverMouseLeave = useCallback(() => setOpen(false), []);
 
-            const content = (
+            const content = DateRange ? (
                 <div onMouseLeave={handlePopoverMouseLeave}>
                     <DateRange
                         editableDateInputs={true}
@@ -89,6 +110,10 @@ export const DateFilter = (): DateFilterProps => {
                         showDateDisplay={false}
                         // retainEndDateOnFirstSelection={true}
                     />
+                </div>
+            ) : (
+                <div style={{ padding: '10px' }}>
+                    Date filtering requires react-date-range package to be installed.
                 </div>
             );
 

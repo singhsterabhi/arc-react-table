@@ -6,7 +6,7 @@ import {
     useImperativeHandle,
     MutableRefObject,
 } from 'react';
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash-es';
 
 interface ContainerDimensions {
     width: number;

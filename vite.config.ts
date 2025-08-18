@@ -15,11 +15,12 @@ export default defineConfig({
         dts({
             insertTypesEntry: true, // Inserts type entry points
             include: ['src/**/*', 'vite-env.d.ts'],
-            exclude: ['src/**/*.test.*', 'src/**/*.spec.*'],
-            rollupTypes: false, // Disable rollup to avoid circular dependency issues
-            copyDtsFiles: true, // Copy .d.ts files for comprehensive type support
+            exclude: ['src/**/*.test.*', 'src/**/*.spec.*', 'src/**/*.less'],
+            rollupTypes: true, // Enable rollup to bundle types into fewer files
+            copyDtsFiles: false, // Don't copy individual .d.ts files
             outDir: 'dist',
-            entryRoot: 'src', // Set entry root for proper type resolution
+            entryRoot: 'src',
+            staticImport: true, // Handle static imports properly
         }),
     ],
     css: {
@@ -37,9 +38,17 @@ export default defineConfig({
             formats: ['es'], // Only ESM format
             fileName: (format, entryName) => `${entryName}.${format}.js`,
         },
+        minify: 'terser', // Use terser for better minification
         rollupOptions: {
-            // No globals needed for ESM builds
-            // External dependencies will be imported normally
+            // Better tree-shaking configuration
+            treeshake: {
+                preset: 'smallest',
+                moduleSideEffects: false,
+            },
+            external: (id) => {
+                // External large optional dependencies
+                return id.includes('@tanstack/react-query') || id.includes('react-date-range');
+            },
         },
     },
 });

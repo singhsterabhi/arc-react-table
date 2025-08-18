@@ -2,10 +2,34 @@
 
 # React Table Publishing Script
 # This script publishes arc-react-table to the npm public registry
+# Usage: ./publish.sh [version]
+# If no version is provided, the patch version will be automatically incremented
 
 set -e  # Exit on any error
 
 echo "🚀 Starting React Table Publishing Process..."
+
+# Handle version argument
+NEW_VERSION="$1"
+
+if [ -n "$NEW_VERSION" ]; then
+    echo "📝 Using provided version: $NEW_VERSION"
+else
+    echo "📝 No version provided, auto-incrementing patch version..."
+    # Get current version and increment patch
+    CURRENT_VERSION=$(node -p "require('./package.json').version")
+    echo "📋 Current version: $CURRENT_VERSION"
+    
+    # Use npm version to increment patch version
+    NEW_VERSION=$(npm version patch --no-git-tag-version | sed 's/^v//')
+    echo "📈 New version: $NEW_VERSION"
+fi
+
+# Update package.json with the new version if it was provided as argument
+if [ -n "$1" ]; then
+    echo "📝 Updating package.json version to $NEW_VERSION..."
+    npm version "$NEW_VERSION" --no-git-tag-version --allow-same-version
+fi
 
 # Check if user is logged in to npm
 echo "🔐 Checking npm authentication..."
@@ -48,7 +72,7 @@ echo "✅ Build completed successfully"
 # Show package info before publishing
 echo "📦 Package information:"
 PACKAGE_NAME=$(node -p "require('./package.json').name")
-PACKAGE_VERSION=$(node -p "require('./package.json').version")
+PACKAGE_VERSION="$NEW_VERSION"
 echo "  Name: $PACKAGE_NAME"
 echo "  Version: $PACKAGE_VERSION"
 echo "  Registry: https://registry.npmjs.org/"

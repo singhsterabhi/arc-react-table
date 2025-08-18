@@ -1,6 +1,6 @@
 import { useEffect, useRef, useCallback, useMemo } from 'react';
 import { VisibilityState, ColumnSizingState, Table, Column } from '@tanstack/react-table';
-import isEqual from 'lodash/isEqual';
+import { isEqual } from 'lodash-es';
 
 interface UseTableConfigPersistenceProps {
     tableConfigKey?: string;

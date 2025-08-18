@@ -1,6 +1,6 @@
 import { Table } from '@tanstack/react-table';
 import { useState, useEffect, useRef, useCallback } from 'react';
-import debounce from 'lodash/debounce';
+import { debounce } from 'lodash-es';
 
 /**
  * Custom hook to determine if an extra column should be added to fill remaining space.

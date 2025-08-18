@@ -1,5 +1,18 @@
 import React, { ReactNode, useMemo } from 'react';
-import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query';
+
+// Conditional imports for optional dependency
+let QueryClient: any;
+let QueryClientProvider: any;
+let useQueryClient: any;
+
+try {
+    const reactQuery = require('@tanstack/react-query');
+    QueryClient = reactQuery.QueryClient;
+    QueryClientProvider = reactQuery.QueryClientProvider;
+    useQueryClient = reactQuery.useQueryClient;
+} catch (e) {
+    // @tanstack/react-query is not available
+}
 
 interface ReactTableQueryClientProviderProps {
     children: ReactNode;
@@ -11,6 +24,7 @@ const ReactTableQueryClientProvider: React.FC<ReactTableQueryClientProviderProps
 }) => {
     // Create a default QueryClient for the table
     const defaultQueryClient = useMemo(() => {
+        if (!QueryClient) return null;
         return new QueryClient({
             defaultOptions: {
                 queries: {
@@ -29,6 +43,10 @@ const ReactTableQueryClientProvider: React.FC<ReactTableQueryClientProviderProps
         });
     }, []);
 
+    if (!QueryClientProvider || !defaultQueryClient) {
+        return <>{children}</>;
+    }
+
     return <QueryClientProvider client={defaultQueryClient}>{children}</QueryClientProvider>;
 };
 
@@ -36,6 +54,11 @@ const ReactTableQueryClientProvider: React.FC<ReactTableQueryClientProviderProps
 const ConditionalQueryClientProvider: React.FC<ReactTableQueryClientProviderProps> = ({
     children,
 }) => {
+    // If react-query is not available, just return children
+    if (!useQueryClient) {
+        return <>{children}</>;
+    }
+
     // Check if we're already inside a QueryClient context
     const CheckForExistingClient: React.FC<{ children: ReactNode }> = ({ children }) => {
         try {

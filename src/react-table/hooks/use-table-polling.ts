@@ -1,7 +1,15 @@
-import { useQuery } from '@tanstack/react-query';
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Row } from '@tanstack/react-table';
 import { TablePollingConfig, UpdateTableData } from '../types';
+
+// Conditional import for optional dependency
+let useQuery: any;
+try {
+    const reactQuery = require('@tanstack/react-query');
+    useQuery = reactQuery.useQuery;
+} catch (e) {
+    // @tanstack/react-query is not available
+}
 
 interface UseTablePollingProps {
     pollingConfig: TablePollingConfig | null;
@@ -70,18 +78,20 @@ export const useTablePolling = ({
 
     const shouldPoll = enabled && isConfigEnabled && isPollingEnabled && pollingRows.size > 0;
 
-    const query = useQuery({
-        queryKey,
-        queryFn,
-        enabled: shouldPoll,
-        refetchInterval: pollingInterval,
-        select: pollingConfig?.select || undefined,
-        retry: false,
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: false,
-        staleTime: 0,
-        gcTime: 0,
-    });
+    const query = useQuery
+        ? useQuery({
+              queryKey,
+              queryFn,
+              enabled: shouldPoll,
+              refetchInterval: pollingInterval,
+              select: pollingConfig?.select || undefined,
+              retry: false,
+              refetchOnWindowFocus: false,
+              refetchOnReconnect: false,
+              staleTime: 0,
+              gcTime: 0,
+          })
+        : { data: null, isLoading: false, error: null };
 
     // Handle query data updates
     useEffect(() => {

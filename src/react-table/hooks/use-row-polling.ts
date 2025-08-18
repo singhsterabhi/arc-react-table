@@ -1,7 +1,15 @@
-import { useQuery } from '@tanstack/react-query';
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { Row } from '@tanstack/react-table';
 import { RowPollingConfig, UpdateRowData } from '../types';
+
+// Conditional import for optional dependency
+let useQuery: any;
+try {
+    const reactQuery = require('@tanstack/react-query');
+    useQuery = reactQuery.useQuery;
+} catch (e) {
+    // @tanstack/react-query is not available
+}
 
 interface UseRowPollingProps {
     row: Row<any>;
@@ -43,21 +51,23 @@ export const useRowPolling = ({
         return onPoll(row);
     }, [onPoll, row]);
 
-    const query = useQuery({
-        queryKey,
-        queryFn,
-        enabled: shouldPoll,
-        refetchInterval: pollingInterval,
-        select: pollingConfig?.select || undefined,
-        // Disable automatic retries for polling to avoid excessive API calls
-        retry: false,
-        // Don't refetch on window focus for polling queries
-        refetchOnWindowFocus: false,
-        // Don't refetch on reconnect for polling queries
-        refetchOnReconnect: false,
-        staleTime: 0,
-        gcTime: 0,
-    });
+    const query = useQuery
+        ? useQuery({
+              queryKey,
+              queryFn,
+              enabled: shouldPoll,
+              refetchInterval: pollingInterval,
+              select: pollingConfig?.select || undefined,
+              // Disable automatic retries for polling to avoid excessive API calls
+              retry: false,
+              // Don't refetch on window focus for polling queries
+              refetchOnWindowFocus: false,
+              // Don't refetch on reconnect for polling queries
+              refetchOnReconnect: false,
+              staleTime: 0,
+              gcTime: 0,
+          })
+        : { data: null, isLoading: false, error: null };
 
     // Handle side effect: Update row data when new data is received
     useEffect(() => {

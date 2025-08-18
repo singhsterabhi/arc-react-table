@@ -4,7 +4,7 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { TableContent } from './table-content';
 import './body.less';
 import { RenderDetailPanelProps, GetRowPollingConfig, UpdateRowData } from '../../types';
-import throttle from 'lodash/throttle';
+import { throttle } from 'lodash-es';
 
 interface BodyElementProps {
     table: Table<any>;
