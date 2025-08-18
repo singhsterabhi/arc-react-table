@@ -7,21 +7,21 @@ import './numeric-filter.less';
 import { convertToPercent, forceDecimalPlaces } from '../../utils';
 
 const classNames = {
-    root: 'custom-mantine-table-numeric-filter-popover',
-    body: 'custom-mantine-table-numeric-filter-popover-content',
+    root: 'custom-react-table-numeric-filter-popover',
+    body: 'custom-react-table-numeric-filter-popover-content',
 };
 const GreaterThanOutlined = () => (
-    <span className='custom-mantine-table-numeric-filter-icon greater-than'>{'>'}</span>
+    <span className='custom-react-table-numeric-filter-icon greater-than'>{'>'}</span>
 );
 
 const LessThanOutlined = () => (
-    <span className='custom-mantine-table-numeric-filter-icon less-than'>{'<'}</span>
+    <span className='custom-react-table-numeric-filter-icon less-than'>{'<'}</span>
 );
 const ContainsOutlined = () => (
-    <span className='custom-mantine-table-numeric-filter-icon contains'>*</span>
+    <span className='custom-react-table-numeric-filter-icon contains'>*</span>
 );
 const EqualsOutlined = () => (
-    <span className='custom-mantine-table-numeric-filter-icon equals'>{'='}</span>
+    <span className='custom-react-table-numeric-filter-icon equals'>{'='}</span>
 );
 
 type FilterMode = 'greaterThan' | 'lessThan' | 'contains' | 'equals';
@@ -71,34 +71,34 @@ const InputPrefix = ({ column, filterValue, setFilterMode, filterMode }: InputPr
             <Menu
                 onMouseLeave={onMouseLeave}
                 mode='vertical'
-                className='custom-mantine-table-numeric-filter-menu'
+                className='custom-react-table-numeric-filter-menu'
                 onClick={onClick}
                 selectable
                 selectedKeys={[filterMode]}
             >
-                <Menu.Item key='equals' className='custom-mantine-table-numeric-filter-menu-item'>
-                    <div className='custom-mantine-table-numeric-filter-menu-item-content'>
+                <Menu.Item key='equals' className='custom-react-table-numeric-filter-menu-item'>
+                    <div className='custom-react-table-numeric-filter-menu-item-content'>
                         <EqualsOutlined />
                         <span>Equals</span>
                     </div>
                 </Menu.Item>
                 <Menu.Item
                     key='greaterThan'
-                    className='custom-mantine-table-numeric-filter-menu-item'
+                    className='custom-react-table-numeric-filter-menu-item'
                 >
-                    <div className='custom-mantine-table-numeric-filter-menu-item-content'>
+                    <div className='custom-react-table-numeric-filter-menu-item-content'>
                         <GreaterThanOutlined />
                         <span>Greater Than</span>
                     </div>
                 </Menu.Item>
-                <Menu.Item key='lessThan' className='custom-mantine-table-numeric-filter-menu-item'>
-                    <div className='custom-mantine-table-numeric-filter-menu-item-content'>
+                <Menu.Item key='lessThan' className='custom-react-table-numeric-filter-menu-item'>
+                    <div className='custom-react-table-numeric-filter-menu-item-content'>
                         <LessThanOutlined />
                         <span>Less Than</span>
                     </div>
                 </Menu.Item>
-                <Menu.Item key='contains' className='custom-mantine-table-numeric-filter-menu-item'>
-                    <div className='custom-mantine-table-numeric-filter-menu-item-content'>
+                <Menu.Item key='contains' className='custom-react-table-numeric-filter-menu-item'>
+                    <div className='custom-react-table-numeric-filter-menu-item-content'>
                         <ContainsOutlined />
                         <span>Contains</span>
                     </div>
@@ -133,7 +133,7 @@ const InputPrefix = ({ column, filterValue, setFilterMode, filterMode }: InputPr
             classNames={classNames}
             arrow={false}
         >
-            <div className='custom-mantine-table-numeric-filter-icon-container'>
+            <div className='custom-react-table-numeric-filter-icon-container'>
                 {getFilterModeIcon()}
             </div>
         </Popover>
@@ -183,7 +183,7 @@ export const NumericFilter = (type?: string): NumericFilterProps => {
 
             return (
                 <Input
-                    className='custom-mantine-table-numeric-filter'
+                    className='custom-react-table-numeric-filter'
                     placeholder='Search...'
                     value={filterValue}
                     onChange={handleInputChange}
