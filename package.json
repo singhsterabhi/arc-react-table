@@ -1,0 +1,103 @@
+{
+    "name": "arc-react-table",
+    "version": "0.0.1",
+    "private": false,
+    "type": "module",
+    "description": "A powerful, feature-rich React table component library built on top of TanStack Table with comprehensive TypeScript support",
+    "module": "./dist/react-table.es.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/react-table.es.js",
+            "default": "./dist/react-table.es.js"
+        }
+    },
+    "files": [
+        "dist"
+    ],
+    "typesVersions": {
+        "*": {
+            "*": [
+                "./dist/index.d.ts"
+            ]
+        }
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "build": "vite build",
+        "prepublishOnly": "npm run build",
+        "dev": "vite build --watch",
+        "format": "prettier --write .",
+        "format:check": "prettier --check .",
+        "prepare": "husky"
+    },
+    "keywords": [
+        "react",
+        "table",
+        "tanstack",
+        "typescript",
+        "data-grid",
+        "component",
+        "antd",
+        "ui",
+        "pagination",
+        "sorting",
+        "filtering"
+    ],
+    "author": "Abhishek Singh <singhsterabhi@gmail.com>",
+    "license": "ISC",
+    "homepage": "https://github.com/singhsterabhi/arc-react-table#readme",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/singhsterabhi/arc-react-table.git"
+    },
+    "bugs": {
+        "url": "https://github.com/singhsterabhi/arc-react-table/issues"
+    },
+    "peerDependencies": {
+        "antd": "^5.26.4",
+        "react": ">=17.0.0",
+        "react-dom": ">=17.0.0"
+    },
+    "dependencies": {
+        "@dnd-kit/core": "^6.3.1",
+        "@dnd-kit/modifiers": "^9.0.0",
+        "@dnd-kit/sortable": "^10.0.0",
+        "@tanstack/react-query": "^5.82.0",
+        "@tanstack/react-table": "^8.21.3",
+        "@tanstack/react-virtual": "^3.13.12",
+        "@types/react-date-range": "^1.4.10",
+        "classnames": "^2.5.1",
+        "dayjs": "^1.11.13",
+        "lodash": "^4.17.21",
+        "react-animate-height": "^3.2.3",
+        "react-date-range": "^2.0.1"
+    },
+    "devDependencies": {
+        "@types/lodash": "^4.17.13",
+        "@types/node": "^24.0.12",
+        "@types/react": "^19.1.8",
+        "@types/react-dom": "^19.1.6",
+        "@vitejs/plugin-react": "^4.6.0",
+        "husky": "^9.1.7",
+        "less": "^4.3.0",
+        "lint-staged": "^16.1.5",
+        "prettier": "^3.6.2",
+        "rollup-plugin-peer-deps-external": "^2.2.4",
+        "typescript": "^5.8.3",
+        "vite": "^7.0.3",
+        "vite-plugin-css-injected-by-js": "^3.5.2",
+        "vite-plugin-dts": "^4.5.4",
+        "vite-plugin-svgr": "^4.3.0"
+    },
+    "publishConfig": {
+        "access": "public",
+        "registry": "https://registry.npmjs.org/"
+    },
+    "lint-staged": {
+        "*.{js,jsx,ts,tsx,json,css,less,md}": [
+            "prettier --write"
+        ]
+    }
+}

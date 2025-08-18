@@ -1,0 +1,53 @@
+# Source files
+src/
+examples/
+
+# Development files
+.github/
+*.md
+!README.md
+tsconfig.json
+tsconfig.node.json
+vite.config.ts
+vite-env.d.ts
+
+# Development dependencies
+node_modules/
+.npm/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Runtime data
+pids/
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+.nyc_output/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Build artifacts (keep only dist)
+!dist/

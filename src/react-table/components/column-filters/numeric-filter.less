@@ -1,0 +1,80 @@
+.custom-mantine-table-numeric-filter {
+    width: 100%;
+    height: 26px;
+    padding-left: 2px;
+    padding-right: 6px;
+
+    &.ant-input-affix-wrapper-focused {
+        background: #f9f7e4;
+    }
+
+    .ant-input {
+        padding: 4px 11px;
+        font-size: 13px;
+        border-radius: 4px;
+
+        // Hide spinner arrows for number input in WebKit/Blink browsers
+        &::-webkit-outer-spin-button,
+        &::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            appearance: none;
+            margin: 0;
+        }
+
+        // Hide spinner arrows for number input in Firefox
+        &[type='number'] {
+            -moz-appearance: textfield;
+            appearance: textfield;
+        }
+    }
+
+    .ant-input-prefix {
+        margin-right: 0;
+    }
+
+    .ant-input-suffix {
+        margin-left: 0;
+        .ant-input-clear-icon {
+            font-size: 12px;
+        }
+    }
+
+    .custom-mantine-table-numeric-filter-icon-container {
+        cursor: pointer;
+        margin-right: 4px;
+        background: white;
+    }
+}
+
+.custom-mantine-table-numeric-filter-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: solid 1px #ebeced;
+    height: 18px;
+    width: 18px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.custom-mantine-table-numeric-filter-popover {
+    .custom-mantine-table-numeric-filter-popover-content {
+        padding: 4px;
+
+        .custom-mantine-table-numeric-filter-menu {
+            border: none;
+
+            .ant-menu-item.custom-mantine-table-numeric-filter-menu-item {
+                padding-inline: 8px;
+                height: 32px;
+                line-height: 32px;
+                .custom-mantine-table-numeric-filter-menu-item-content {
+                    display: flex;
+                    align-items: center;
+                    gap: 4px;
+                }
+            }
+        }
+    }
+}

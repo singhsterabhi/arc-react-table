@@ -1,0 +1,162 @@
+.react-table-container .react-table {
+    background: white;
+
+    .virtualized-container {
+        width: 100%;
+        position: relative;
+        will-change: transform;
+        background: white;
+
+        .virtualized-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            will-change: transform;
+            transform: translate3d(0, 0, 0);
+            backface-visibility: hidden;
+        }
+    }
+
+    table.react-table-table {
+        width: 100%;
+
+        tbody {
+            tr {
+                background: #fff;
+                transition: background 0.4s ease !important;
+
+                &[class^='row-level-'] {
+                    td,
+                    .cell {
+                        background: inherit;
+                    }
+                }
+
+                &:hover {
+                    background: var(--primary-1, #d1e9ff) !important;
+                }
+
+                &.selected-row {
+                    background: var(--primary-1, #d1e9ff) !important;
+                }
+
+                &.detail-panel-row {
+                    background-color: rgb(233, 240, 247);
+                    position: relative;
+
+                    &:hover {
+                        background: rgb(233, 240, 247) !important;
+                    }
+
+                    & > td {
+                        border-bottom: none;
+
+                        & > .detail-panel-content {
+                            will-change: transform;
+
+                            &.detail-panel-content-collapsed {
+                                padding: 0;
+                                opacity: 0;
+                            }
+
+                            &.detail-panel-content-expanded {
+                                padding: 10px 10px 10px 20px;
+
+                                & > div {
+                                    height: 100%;
+                                    width: 100%;
+                                    max-height: inherit;
+                                }
+                            }
+
+                            &.detail-panel-content-transitioning {
+                                border-left: 1px solid var(--primary-6, #1890ff);
+                                overflow: auto;
+                                position: sticky;
+                                left: 0;
+                                z-index: 1;
+                                background-color: inherit;
+                                opacity: 1;
+
+                                box-shadow:
+                                    inset 10px 0 8px -10px rgba(0, 0, 0, 0.1),
+                                    inset 0 10px 8px -10px rgba(0, 0, 0, 0.1),
+                                    inset 0 -10px 8px -10px rgba(0, 0, 0, 0.1);
+                            }
+                        }
+                    }
+                }
+
+                td {
+                    padding: 0;
+                    // border-bottom: 1px solid #eaeaea;
+                    position: relative;
+
+                    &.pinned-column {
+                        position: sticky;
+                        background-color: white;
+                        z-index: 1;
+                        will-change: transform;
+                        backface-visibility: hidden;
+                    }
+
+                    &.pinned-box-shdadow {
+                        box-shadow: 6px 0 5px -5px rgba(0, 0, 0, 0.1);
+                    }
+
+                    .cell {
+                        text-align: left;
+                        vertical-align: middle;
+                        font-size: 14px;
+                        padding: 6px 6px;
+                        width: 100%;
+                        height: 100%;
+                        overflow: hidden;
+                        text-wrap: nowrap;
+                        text-overflow: ellipsis;
+                        display: flex;
+                        align-items: center;
+                        gap: 4px;
+                        will-change: contents;
+
+                        &:has(> .cell-context-menu) {
+                            padding: 0;
+                        }
+                    }
+
+                    &:has(.cell .cell-context-menu-visible):not(:has(> .detail-panel-content)) {
+                        border-color: var(--primary-6, #d1e9ff) !important;
+                        transition: border-color 0.3s;
+
+                        background: var(--primary-2, #d1e9ff) !important;
+                        background-blend-mode: lighten;
+                    }
+
+                    &:has(> .cell):not(:has(> .detail-panel-content)) {
+                        border: 0.5px solid #eaeaea;
+
+                        &:hover {
+                            border-color: var(--primary-3, #d1e9ff);
+                            transition: border-color 0.3s;
+                        }
+                    }
+
+                    &.right-shadow {
+                        .cell {
+                            &::before {
+                                content: '';
+                                position: absolute;
+                                top: 0;
+                                left: 0;
+                                width: 1px;
+                                height: 100%;
+                                background: #eaeaea;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

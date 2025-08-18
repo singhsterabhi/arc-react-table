@@ -1,0 +1,22 @@
+.react-table-expand-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    min-height: 24px;
+    min-width: 24px;
+
+    .react-table-expand-icon {
+        transition: transform 0.2s ease-in-out;
+
+        &.collapsed {
+            transform: rotate(0deg);
+        }
+
+        &.expanded {
+            transform: rotate(90deg);
+        }
+    }
+}

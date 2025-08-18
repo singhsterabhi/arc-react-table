@@ -1,0 +1,52 @@
+/* Cell Context Menu Styling - Similar to OverflowMenu */
+.cell-context-menu {
+    height: 100%;
+    width: 100%;
+    // display: contents;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 6px;
+
+    @supports not (display: contents) {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+    }
+}
+
+/* Context menu is now attached directly to .cell elements via refs */
+/* No wrapper-specific styles needed */
+
+.react-table-masked-popup-container-dropdown.react-table-cell-context-menu {
+    background-color: var(--background-color, #fff);
+    border-radius: 8px;
+    max-height: 80%;
+    height: max-content;
+
+    .ant-dropdown-menu {
+        background-color: var(--background-color, #fff);
+        border-radius: inherit;
+        max-height: 100%;
+        height: max-content;
+        overflow-y: auto;
+
+        .ant-dropdown-menu-item-group {
+            .ant-dropdown-menu-item-group-title {
+                padding-bottom: 4px;
+                font-size: 10px !important;
+            }
+
+            .ant-dropdown-menu-item-group-list {
+                margin: 0;
+            }
+
+            .ant-dropdown-menu-item {
+                padding: 4px 12px;
+            }
+        }
+    }
+}

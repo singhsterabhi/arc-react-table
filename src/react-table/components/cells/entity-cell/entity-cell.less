@@ -1,0 +1,35 @@
+.entity-cell {
+    &__container {
+        display: block;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        margin-bottom: 0 !important;
+
+        .ant-typography {
+            color: currentColor;
+        }
+    }
+
+    &__content {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+    }
+
+    &__value {
+        flex: 1;
+        margin: 0;
+        overflow: hidden;
+
+        &.text-right {
+            text-align: right;
+        }
+    }
+
+    &__icon {
+        display: flex;
+        align-items: center;
+    }
+}

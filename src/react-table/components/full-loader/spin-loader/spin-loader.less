@@ -1,0 +1,81 @@
+.spin-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+
+    &.small {
+        svg {
+            width: 24px;
+            height: 24px;
+        }
+    }
+
+    &.default {
+        svg {
+            width: 32px;
+            height: 32px;
+        }
+    }
+
+    &.large {
+        svg {
+            width: 40px;
+            height: 40px;
+        }
+    }
+
+    &.first-loader {
+        width: max-content;
+        height: max-content;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .ant-spin {
+            height: 56px;
+            width: 56px;
+            margin-bottom: 24px;
+            svg {
+                width: 56px;
+                height: 56px;
+                transform: none;
+            }
+        }
+    }
+
+    .loading-message {
+        font-weight: normal;
+    }
+}
+
+.spin-loader svg {
+    transform: scale(1.75);
+    .inner-circle {
+        animation: rotate-reverse 2s infinite linear;
+        transform-origin: 50% 50%;
+    }
+    .outer-circle {
+        animation: rotate 1s infinite linear;
+        transform-origin: 50% 50%;
+    }
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+@keyframes rotate-reverse {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(-360deg);
+    }
+}

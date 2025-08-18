@@ -1,0 +1,40 @@
+.react-table-pagination {
+    gap: 4px;
+
+    .ant-pagination-item {
+        &.ant-pagination-item-active {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+
+            a {
+                color: #fff;
+            }
+        }
+    }
+
+    &.react-table-pagination-cursor {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .react-table-pagination-cursor-button {
+            font-size: 12px;
+            font-weight: 500;
+
+            .react-table-pagination-cursor-button-arrow-left {
+                transform: rotate(180deg);
+            }
+        }
+
+        .current-page-indicator {
+            font-weight: 500;
+            background-color: var(--neutral-1);
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+    }
+}

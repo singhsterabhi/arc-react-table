@@ -1,0 +1,94 @@
+.column-menu-container {
+    // padding: 8px;
+    min-width: 250px;
+    max-width: 350px;
+    background-color: #fff; // Ensure background for popover
+    // border-radius: 6px;
+    // box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    max-height: 40vh;
+}
+
+.column-menu-header {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.column-menu-list {
+    max-height: minmax(400px, 100vh); // Limit height and allow scrolling
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    position: relative;
+    z-index: 1;
+}
+
+.column-menu-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    margin-bottom: 4px;
+    width: 100%;
+    height: 32px;
+    user-select: none;
+
+    .column-name {
+        margin-left: 8px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex-grow: 1;
+    }
+
+    .ant-space {
+        gap: 4px !important; // Adjust space between items if needed
+    }
+
+    .drag-handle {
+        cursor: grab;
+        &:disabled {
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+    }
+
+    &:hover {
+        background-color: #f9f9f9;
+    }
+}
+
+// Add shadow effects for scrolling indicators
+.column-menu-container::before,
+.column-menu-container::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 10px;
+    pointer-events: none;
+    transition: box-shadow 0.3s;
+    z-index: 4;
+}
+
+.column-menu-container::before {
+    top: 40px; // Position below header
+}
+
+.column-menu-container::after {
+    bottom: 0;
+    right: 0;
+}
+
+.column-menu-container.has-scroll-up::before {
+    box-shadow: inset 0px 10px 8px -8px rgba(5, 5, 5, 0.06);
+}
+
+.column-menu-container.has-scroll-down::after {
+    box-shadow: inset 0px -10px 8px -8px rgba(5, 5, 5, 0.06);
+}

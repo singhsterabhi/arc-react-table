@@ -1,0 +1,31 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "useDefineForClassFields": true,
+        "lib": ["ES2020", "DOM", "DOM.Iterable"],
+        "module": "ESNext",
+        "skipLibCheck": true,
+        "moduleResolution": "bundler",
+        "allowImportingTsExtensions": true,
+        "resolveJsonModule": true,
+        "isolatedModules": true,
+        "noEmit": true, // Vite handles transpiling, tsconfig is for type checking and declaration
+        "jsx": "react-jsx",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noFallthroughCasesInSwitch": true,
+        // Library-specific options
+        "declaration": true, // Generates .d.ts files
+        "declarationMap": true,
+        "sourceMap": true
+    },
+    "include": ["src", "vite-env.d.ts"],
+    "references": [
+        {
+            "path": "./tsconfig.node.json"
+        }
+    ]
+}

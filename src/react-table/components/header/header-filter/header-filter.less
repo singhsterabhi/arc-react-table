@@ -1,0 +1,23 @@
+.column-filter-wrapper {
+    overflow: hidden;
+    width: 100%;
+
+    &:has(.column-filter-content.visible) {
+        height: 26px;
+    }
+
+    .column-filter-content {
+        max-height: 0;
+        opacity: 0;
+        overflow: hidden;
+        transition:
+            max-height 0.3s ease-out,
+            opacity 0.3s ease-out;
+        width: 100%;
+
+        &.visible {
+            max-height: 100px;
+            opacity: 1;
+        }
+    }
+}

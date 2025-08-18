@@ -1,0 +1,28 @@
+.expand-collapse-cell {
+    display: flex;
+    justify-content: center;
+    cursor: pointer;
+    align-items: center;
+    padding: 6px 5px;
+
+    svg {
+        width: 12px;
+        height: 12px;
+
+        path {
+            fill: #888888e0;
+        }
+    }
+
+    .expand-collapse-cell__icon_ {
+        &collapsed {
+            transform: rotate(0deg);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        &expanded {
+            transform: rotate(90deg);
+            transition: transform 0.2s ease-in-out;
+        }
+    }
+}

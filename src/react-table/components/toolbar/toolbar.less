@@ -1,0 +1,50 @@
+.react-table-top-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    padding: 0 8px;
+    border-bottom: 1px solid #e9ecef;
+    // min-height: 38px;
+    // margin-bottom: 8px;
+    gap: 8px;
+
+    .react-table-top-toolbar-row {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .react-table-top-toolbar-row-flex {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        overflow: hidden;
+    }
+
+    .react-table-top-toolbar-left {
+        flex: 1;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+        overflow: hidden;
+
+        .react-table-top-toolbar-title {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: max-content;
+        }
+    }
+
+    .react-table-top-toolbar-right {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 4px;
+    }
+}

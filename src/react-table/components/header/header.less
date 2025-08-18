@@ -1,0 +1,200 @@
+.react-table-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    z-index: 2;
+    position: sticky;
+    top: 0px;
+    z-index: 20;
+    width: 100%;
+
+    thead {
+        tr {
+            &:first-of-type {
+                &:first-of-type {
+                    border-top-left-radius: 4px;
+                    border-left: none;
+                    border-top: none;
+                }
+
+                &:last-of-type {
+                    border-top-right-radius: 4px;
+                    border-right: none;
+                    border-top: none;
+                }
+            }
+
+            th {
+                border: 0.5px solid #eaeaea;
+                background: #fafafa;
+                position: relative;
+
+                &:hover {
+                    background: #f0f0f0;
+                }
+            }
+        }
+    }
+}
+
+.header-cell {
+    padding: 12px 16px;
+    font-weight: 600;
+    text-align: left;
+    color: #495057;
+    white-space: nowrap;
+    padding: 8px;
+    text-align: left;
+
+    &.pinned-column {
+        position: sticky;
+        background-color: #f8f9fa;
+        z-index: 3;
+    }
+
+    &.pinned-box-shdadow {
+        box-shadow: 6px 0 5px -5px rgba(0, 0, 0, 0.1);
+    }
+
+    height: 100%;
+    width: 100%;
+    display: block;
+    box-sizing: border-box;
+
+    // &::after {
+    //     content: '';
+    //     position: absolute;
+    //     top: 0;
+    //     right: 0;
+    //     width: 1px;
+    //     height: 100%;
+    //     background: #eaeaea;
+    // }
+
+    &.cursor-pointer {
+        cursor: pointer;
+    }
+
+    // Column dragging styles
+    &.draggable {
+        cursor: grab;
+
+        &:active {
+            cursor: grabbing;
+        }
+    }
+
+    &.dragging {
+        opacity: 0.5;
+        background-color: #f0f0f0;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-header {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        flex-direction: column;
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            justify-content: space-between;
+            width: 100%;
+
+            .header-name {
+                overflow: hidden;
+                text-overflow: ellipsis;
+
+                &.header-name-with-action-items {
+                    flex: 1;
+                }
+
+                &:not(.header-name-with-action-items) {
+                    width: 100%;
+                }
+            }
+
+            .header-action-buttons {
+                height: 100%;
+                display: flex;
+                align-items: center;
+                gap: 4px;
+                color: currentColor;
+
+                .header-action-button {
+                    display: none;
+
+                    &.is-hovered {
+                        display: inline-block;
+                        cursor: pointer;
+                    }
+
+                    &.is-active {
+                        cursor: pointer;
+                        display: inline-block;
+                    }
+                }
+            }
+        }
+
+        .table-sorter {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .resizer {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            right: 0;
+            width: 4px;
+            background: var(--primary-2);
+            cursor: col-resize;
+            user-select: none;
+            touch-action: none;
+
+            @media screen and (max-width: 480px) {
+                background: transparent;
+                width: 0;
+                display: none;
+            }
+        }
+
+        .border-right {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            right: 0;
+            width: 1px;
+            background-color: #eaeaea;
+            pointer-events: none;
+        }
+
+        .resizer.isResizing {
+            background: var(--primary-color);
+            opacity: 1;
+        }
+
+        .resizer.isHovered {
+            opacity: 1;
+        }
+
+        @media (hover: hover) {
+            .resizer {
+                opacity: 0;
+            }
+
+            *:hover > {
+                &.resizer {
+                    opacity: 1;
+                    background: var(--primary-color);
+                }
+            }
+        }
+    }
+}

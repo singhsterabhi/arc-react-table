@@ -1,0 +1,64 @@
+.multi-select-filter {
+    width: 100%;
+}
+
+.inline-filter-multiselect {
+    width: 100%;
+    height: 26px !important;
+
+    .ant-select-selector {
+        height: 26px !important;
+        display: flex;
+        align-items: center;
+
+        .ant-select-selection-wrap {
+            .ant-select-selection-overflow {
+                flex-wrap: nowrap;
+            }
+        }
+    }
+
+    .ant-select-arrow {
+        .anticon {
+            height: 10px;
+            width: 10px;
+        }
+    }
+
+    .ant-select-selection-placeholder {
+        font-weight: normal;
+    }
+
+    .ant-select-selection-search {
+        height: 23px !important;
+        display: flex;
+        align-items: center;
+    }
+
+    .ant-select-clear {
+        font-size: 10px !important;
+    }
+
+    .ant-select-selection-item {
+        background: none !important;
+        padding-left: 4px !important;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        .custom-tag-count {
+            font-size: 12px !important;
+            // position: relative;
+            font-weight: 500;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+}
+
+.multi-select-filter-popup {
+    max-height: 400px;
+    overflow: auto;
+    width: max-content;
+    min-width: 100px;
+}
