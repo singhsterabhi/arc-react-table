@@ -5,12 +5,8 @@ import Button from 'antd/es/button';
 import Space from 'antd/es/space';
 import Tooltip from 'antd/es/tooltip';
 import Typography from 'antd/es/typography';
-import {
-    // EyeOutlined,
-    // EyeInvisibleOutlined,
-    PushpinOutlined,
-    HolderOutlined,
-} from '@ant-design/icons'; // Assuming we'll use these icons
+import PushpinOutlined from '@ant-design/icons/lib/icons/PushpinOutlined';
+import HolderOutlined from '@ant-design/icons/lib/icons/HolderOutlined';
 import {
     DndContext,
     closestCenter,

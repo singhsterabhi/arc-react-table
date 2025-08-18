@@ -2,7 +2,7 @@ import React, { useState, useMemo, useCallback } from 'react';
 import Tag from 'antd/es/tag';
 import Popover from 'antd/es/popover';
 import Input from 'antd/es/input';
-import { SearchOutlined } from '@ant-design/icons';
+import SearchOutlined from '@ant-design/icons/lib/icons/SearchOutlined';
 import classNames from 'classnames';
 
 interface QuickFiltersPopoverProps {

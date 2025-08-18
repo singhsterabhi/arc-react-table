@@ -5,6 +5,7 @@ import {
     getFacetedUniqueValues,
     getFilteredRowModel,
     getPaginationRowModel,
+    getSortedRowModel,
     Row,
     TableMeta,
     useReactTable,
@@ -156,7 +157,7 @@ const ReactTable = ({
     initialColumnFilterToggle = true,
     enableColumnMenu = true,
     // Export
-    enableExport = true,
+    enableExport = false,
     onExport,
     // Footer
     showFooter = false,
@@ -422,6 +423,7 @@ const ReactTable = ({
             getRowId: memoizedGetRowId,
             getCoreRowModel: getCoreRowModel(),
             getFilteredRowModel: getFilteredRowModel(),
+            getSortedRowModel: getSortedRowModel(),
             getExpandedRowModel: enableExpanding ? getExpandedRowModel() : undefined,
             getFacetedUniqueValues: getFacetedUniqueValues(),
             getPaginationRowModel:

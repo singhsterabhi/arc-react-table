@@ -70,6 +70,8 @@ const HeaderActionItem = ({ item, table, header, isHovered }: HeaderActionItemPr
     const Element = item.element;
     const isResizing = header.column.getIsResizing();
     const deferredIsResizing = useDeferredValue(isResizing);
+    const sortingState = table.getState().sorting;
+    const columnPinningState = table.getState().columnPinning;
 
     // Memoize the show/hide logic to prevent repeated computations
     const showItem = useMemo(() => {
@@ -78,7 +80,7 @@ const HeaderActionItem = ({ item, table, header, isHovered }: HeaderActionItemPr
 
     const isActive = useMemo(() => {
         return item.getIsActive ? item.getIsActive(header) : false;
-    }, [item.getIsActive, header]);
+    }, [item.getIsActive, header, sortingState, columnPinningState]);
 
     // Memoize the className computation
     const className = useMemo(
@@ -95,4 +97,4 @@ const HeaderActionItem = ({ item, table, header, isHovered }: HeaderActionItemPr
     return <div className={className}>{Element && <Element header={header} table={table} />}</div>;
 };
 
-export default React.memo(HeaderActionItems);
+export default HeaderActionItems;

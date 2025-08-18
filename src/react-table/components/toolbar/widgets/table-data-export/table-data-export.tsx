@@ -1,4 +1,4 @@
-import { DownloadOutlined } from '@ant-design/icons';
+import DownloadOutlined from '@ant-design/icons/lib/icons/DownloadOutlined';
 import { useCallback } from 'react';
 import { Table } from '@tanstack/react-table';
 import { WidgetButton } from '../widget-button/widget-button';

@@ -1,6 +1,6 @@
 import { Header, Table } from '@tanstack/react-table';
 import classNames from 'classnames';
-import { PushpinOutlined } from '@ant-design/icons';
+import PushpinOutlined from '@ant-design/icons/lib/icons/PushpinOutlined';
 import { useCallback, useMemo } from 'react';
 import { ColumnPinningType } from '../../../types';
 

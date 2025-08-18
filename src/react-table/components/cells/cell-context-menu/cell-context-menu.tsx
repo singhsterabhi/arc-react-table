@@ -3,7 +3,7 @@ import Dropdown from 'antd/es/dropdown';
 import { MenuProps } from 'antd/es/menu';
 import message from 'antd/es/message';
 import Tooltip from 'antd/es/tooltip';
-import { CopyOutlined } from '@ant-design/icons';
+import CopyOutlined from '@ant-design/icons/lib/icons/CopyOutlined';
 import { CellContextMenuAction, CellContextMenuContext } from '../../../types';
 import './cell-context-menu.less';
 import classNames from 'classnames';

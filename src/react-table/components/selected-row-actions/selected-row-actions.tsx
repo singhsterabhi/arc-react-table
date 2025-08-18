@@ -2,7 +2,7 @@ import { Table } from '@tanstack/react-table';
 import Button from 'antd/lib/button';
 import { SelectedRowActionButtonProps } from './types';
 import './selected-row-actions.less';
-import { CloseOutlined } from '@ant-design/icons';
+import CloseOutlined from '@ant-design/icons/lib/icons/CloseOutlined';
 import Tooltip from 'antd/es/tooltip';
 
 export const SelectedRowActions = ({

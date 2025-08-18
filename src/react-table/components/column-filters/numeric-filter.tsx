@@ -69,7 +69,7 @@ const InputPrefix = ({ column, filterValue, setFilterMode, filterMode }: InputPr
     const content = useMemo(
         () => (
             <Menu
-                // onMouseLeave={onMouseLeave}
+                onMouseLeave={onMouseLeave}
                 mode='vertical'
                 className='custom-react-table-numeric-filter-menu'
                 onClick={onClick}
