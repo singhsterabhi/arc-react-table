@@ -5,7 +5,13 @@ import { Table } from '@tanstack/react-table';
 import { WidgetButton } from '../widget-button/widget-button';
 import { useCallback, useMemo } from 'react';
 
-export const ColumnFilterToggleWidget = ({ table }: { table: Table<any> }) => {
+export const ColumnFilterToggleWidget = ({
+    table,
+    widgetButtonSize = 'md',
+}: {
+    table: Table<any>;
+    widgetButtonSize?: 'sm' | 'md' | 'lg';
+}) => {
     const handleToggleFilters = useCallback(() => {
         table.options.meta?.toggleFilters?.();
     }, [table.options.meta]);
@@ -24,6 +30,7 @@ export const ColumnFilterToggleWidget = ({ table }: { table: Table<any> }) => {
             title={table.options.meta?.filtersEnabled ? 'Disable Filters' : 'Enable Filters'}
             icon={iconNode}
             onClick={handleToggleFilters}
+            size={widgetButtonSize}
         />
     );
 };

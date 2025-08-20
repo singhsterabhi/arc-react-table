@@ -19,6 +19,7 @@ interface TopToolbarProps {
     rowSelectionActions?: SelectedRowActionButtonProps[];
     tableTitle?: string | React.ReactNode;
     showToggleAllRowsSelected?: boolean;
+    widgetButtonSize?: 'sm' | 'md' | 'lg';
 }
 
 const ReactTableTopToolbar: React.FC<TopToolbarProps> = ({
@@ -35,6 +36,7 @@ const ReactTableTopToolbar: React.FC<TopToolbarProps> = ({
     rowSelectionActions,
     tableTitle,
     showToggleAllRowsSelected = true,
+    widgetButtonSize = 'md',
 }) => {
     return (
         <div className='react-table-top-toolbar'>
@@ -54,11 +56,22 @@ const ReactTableTopToolbar: React.FC<TopToolbarProps> = ({
                     {rightToolbarComponent}
                 </div>
                 <div className='react-table-top-toolbar-right'>
-                    {enableExport && <TableDataExport table={table} onExport={onExport} />}
-                    {enableColumnFilters && enableColumnFilterToggle && (
-                        <ColumnFilterToggleWidget table={table} />
+                    {enableExport && (
+                        <TableDataExport
+                            table={table}
+                            onExport={onExport}
+                            widgetButtonSize={widgetButtonSize}
+                        />
                     )}
-                    {enableColumnMenu && <ColumnWidget table={table} />}
+                    {enableColumnFilters && enableColumnFilterToggle && (
+                        <ColumnFilterToggleWidget
+                            table={table}
+                            widgetButtonSize={widgetButtonSize}
+                        />
+                    )}
+                    {enableColumnMenu && (
+                        <ColumnWidget table={table} widgetButtonSize={widgetButtonSize} />
+                    )}
                 </div>
             </div>
             <div className='react-table-top-toolbar-row'>

@@ -6,9 +6,14 @@ import { WidgetButton } from '../widget-button/widget-button';
 interface TableDataExportProps {
     onExport?: (data: any[]) => void;
     table: Table<any>;
+    widgetButtonSize?: 'sm' | 'md' | 'lg';
 }
 
-export const TableDataExport = ({ onExport, table }: TableDataExportProps) => {
+export const TableDataExport = ({
+    onExport,
+    table,
+    widgetButtonSize = 'md',
+}: TableDataExportProps) => {
     const handleExport = useCallback(() => {
         // Default export logic (CSV for now) - can be overridden by onExport prop
         const dataToExport = table.getFilteredRowModel().rows.map((row) => row.original);
@@ -48,6 +53,7 @@ export const TableDataExport = ({ onExport, table }: TableDataExportProps) => {
             title='Export Data'
             icon={<DownloadOutlined />}
             onClick={handleExport}
+            size={widgetButtonSize}
         />
     );
 };

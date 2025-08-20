@@ -220,6 +220,7 @@ export interface ReactTableProps {
     isFullHeight?: boolean;
     getParentMaskedPopupContainer?: (triggerNode: HTMLElement) => HTMLElement;
     size?: 'sm' | 'md' | 'lg';
+    widgetButtonSize?: 'sm' | 'md' | 'lg';
 }
 
 export interface RenderDetailPanelProps {

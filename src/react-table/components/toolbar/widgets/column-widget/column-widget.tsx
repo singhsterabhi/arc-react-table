@@ -8,6 +8,7 @@ import { useCallback, useMemo } from 'react';
 
 export interface ColumnWidgetProps {
     table: Table<any>;
+    widgetButtonSize?: 'sm' | 'md' | 'lg';
 }
 
 const classNames = {
@@ -18,7 +19,7 @@ const styles = {
     root: {},
 };
 
-export const ColumnWidget = ({ table }: ColumnWidgetProps) => {
+export const ColumnWidget = ({ table, widgetButtonSize = 'md' }: ColumnWidgetProps) => {
     const content = useCallback(() => {
         return <ColumnMenu table={table} />;
     }, [table]);
@@ -26,8 +27,15 @@ export const ColumnWidget = ({ table }: ColumnWidgetProps) => {
     const stableColumnsIcon = useMemo(() => <ColumnsIcon />, []);
 
     const button = useMemo(() => {
-        return <WidgetButton table={table} title='Column Settings' icon={stableColumnsIcon} />;
-    }, [table, stableColumnsIcon]);
+        return (
+            <WidgetButton
+                table={table}
+                title='Column Settings'
+                icon={stableColumnsIcon}
+                size={widgetButtonSize}
+            />
+        );
+    }, [table, stableColumnsIcon, widgetButtonSize]);
 
     const getPopupContainer = useCallback(() => {
         return document.getElementById('masked-popup-container') as HTMLElement;

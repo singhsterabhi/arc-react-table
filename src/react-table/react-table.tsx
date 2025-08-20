@@ -182,6 +182,7 @@ const ReactTable = ({
     isFullHeight = false,
     getParentMaskedPopupContainer,
     size = 'md',
+    widgetButtonSize = 'md',
 }: ReactTableProps): React.JSX.Element => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -607,6 +608,7 @@ const ReactTable = ({
                     rowSelectionActions={rowSelectionActions}
                     tableTitle={tableTitle}
                     showToggleAllRowsSelected={showToggleAllRowsSelected}
+                    widgetButtonSize={widgetButtonSize}
                 />
             )}
             <div ref={scrollContainerRef} className={tableClasses}>
