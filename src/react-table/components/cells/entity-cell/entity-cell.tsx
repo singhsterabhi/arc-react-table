@@ -57,7 +57,7 @@ const EntityCellComponent = <TData extends RowData, TValue>(
     const content = useMemo(() => {
         if (icon || prefix || suffix) {
             return (
-                <span className={classNames('entity-cell__content', className)}>
+                <span className={classNames('entity-cell__content')}>
                     {icon && <span className='entity-cell__icon'>{icon}</span>}
                     {prefix && <span className='entity-cell__prefix'>{prefix}</span>}
                     <span
@@ -82,7 +82,7 @@ const EntityCellComponent = <TData extends RowData, TValue>(
         return <TextCell value={value} {...(restProps as any)} />;
     }, [icon, value, align, prefix, suffix]);
 
-    return <div className={classNames('entity-cell__container')}>{content}</div>;
+    return <div className={classNames('entity-cell__container', className)}>{content}</div>;
 };
 
 // Use React.memo with proper typing to prevent unnecessary re-renders
