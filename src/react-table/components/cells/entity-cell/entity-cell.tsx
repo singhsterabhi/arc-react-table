@@ -39,6 +39,7 @@ const EntityCellComponent = <TData extends RowData, TValue>(
         suffix,
         formatNumber = false,
         precision = 2,
+        className,
         ...restProps
     } = props;
 
@@ -56,7 +57,7 @@ const EntityCellComponent = <TData extends RowData, TValue>(
     const content = useMemo(() => {
         if (icon || prefix || suffix) {
             return (
-                <span className={classNames('entity-cell__content')}>
+                <span className={classNames('entity-cell__content', className)}>
                     {icon && <span className='entity-cell__icon'>{icon}</span>}
                     {prefix && <span className='entity-cell__prefix'>{prefix}</span>}
                     <span
