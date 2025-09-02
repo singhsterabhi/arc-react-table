@@ -98,6 +98,7 @@ export const useEnhancedColumns = ({
         enableExpanding,
         renderDetailPanel,
         enableExpandAll,
+        expandRowTitle,
         enableColumnFilters,
     ]);
 

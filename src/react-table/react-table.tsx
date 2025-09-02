@@ -40,6 +40,7 @@ import {
     useInfiniteScroll,
     useTableConfigPersistence,
     useTablePolling,
+    getInitialTableStateWithPersistedConfig,
 } from './hooks';
 import { ConditionalQueryClientProvider } from './components';
 
@@ -201,51 +202,6 @@ const ReactTable = ({
     const isManualExpanding = !!(onExpandedChange || expanded);
     const isManualColumnSizing = !!(onColumnSizingChange || columnSizing);
 
-    const { sortingState, handleSortingChange } = useSorting(
-        initialState?.sorting,
-        onSortingChange,
-    );
-    const { expandedState, handleExpandedChange, scrollToRowById, scrollToRowByEvent } =
-        useRowExpansion(
-            initialState?.expanded,
-            onExpandedChange,
-            enableExclusiveRowExpansion,
-            scrollContainerRef as React.RefObject<HTMLElement>,
-        );
-    const { rowSelectionState, handleRowSelectionChange } = useRowSelection(
-        initialState?.rowSelection,
-        onRowSelectionChange,
-    );
-    const { paginationState, handlePaginationChange } = usePagination(
-        initialState?.pagination,
-        onPaginationChange,
-        paginationType === 'cursor' ? Number.MAX_SAFE_INTEGER : totalPageCountForStandardPagination,
-    );
-    const { columnOrderState, handleColumnOrderChange } = useColumnOrder(
-        initialState?.columnOrder,
-        onColumnOrderChange,
-    );
-    const { columnPinningState, handleColumnPinningChange } = useColumnPinning(
-        initialState?.columnPinning,
-        onColumnPinningChange,
-    );
-    const { columnSizingState, handleColumnSizingChange } = useColumnSizing(
-        initialState?.columnSizing,
-        onColumnSizingChange,
-    );
-    const { columnFiltersState, handleColumnFiltersChange } = useColumnFilters(
-        initialState?.columnFilters,
-        onColumnFiltersChange,
-    );
-    const { columnVisibilityState, handleColumnVisibilityChange } = useColumnVisibility(
-        initialState?.columnVisibility,
-        onColumnVisibilityChange,
-    );
-    const { filtersEnabled, toggleFilters } = useFilterToggle(
-        initialColumnFilterToggle,
-        enableColumnFilters,
-    );
-
     const enhancedColumns = useEnhancedColumns({
         columns,
         enableRowSelection,
@@ -255,6 +211,68 @@ const ReactTable = ({
         expandRowTitle,
         enableColumnFilters,
     });
+
+    // Get persisted state merged with initial state - this happens synchronously
+    const effectiveInitialState = useMemo(() => {
+        // We need to create pseudo-columns to validate against persisted config
+        // This is a simplified version of the enhanced columns for validation purposes
+        const columnsForValidation = enhancedColumns.map((col) => ({
+            id: col.id,
+            columnDef: col,
+        })) as any[];
+
+        return getInitialTableStateWithPersistedConfig(
+            tableConfigKey,
+            enableTableConfigPersistence,
+            initialState,
+            columnsForValidation,
+        );
+    }, [enhancedColumns, tableConfigKey, enableTableConfigPersistence, initialState]);
+
+    const { sortingState, handleSortingChange } = useSorting(
+        effectiveInitialState?.sorting,
+        onSortingChange,
+    );
+    const { expandedState, handleExpandedChange, scrollToRowById, scrollToRowByEvent } =
+        useRowExpansion(
+            effectiveInitialState?.expanded,
+            onExpandedChange,
+            enableExclusiveRowExpansion,
+            scrollContainerRef as React.RefObject<HTMLElement>,
+        );
+    const { rowSelectionState, handleRowSelectionChange } = useRowSelection(
+        effectiveInitialState?.rowSelection,
+        onRowSelectionChange,
+    );
+    const { paginationState, handlePaginationChange } = usePagination(
+        initialState?.pagination, // Use original initial state for pagination (don't persist)
+        onPaginationChange,
+        paginationType === 'cursor' ? Number.MAX_SAFE_INTEGER : totalPageCountForStandardPagination,
+    );
+    const { columnOrderState, handleColumnOrderChange } = useColumnOrder(
+        effectiveInitialState?.columnOrder,
+        onColumnOrderChange,
+    );
+    const { columnPinningState, handleColumnPinningChange } = useColumnPinning(
+        effectiveInitialState?.columnPinning,
+        onColumnPinningChange,
+    );
+    const { columnSizingState, handleColumnSizingChange } = useColumnSizing(
+        effectiveInitialState?.columnSizing,
+        onColumnSizingChange,
+    );
+    const { columnFiltersState, handleColumnFiltersChange } = useColumnFilters(
+        effectiveInitialState?.columnFilters,
+        onColumnFiltersChange,
+    );
+    const { columnVisibilityState, handleColumnVisibilityChange } = useColumnVisibility(
+        effectiveInitialState?.columnVisibility,
+        onColumnVisibilityChange,
+    );
+    const { filtersEnabled, toggleFilters } = useFilterToggle(
+        initialColumnFilterToggle,
+        enableColumnFilters,
+    );
 
     const infiniteScrollResult = useInfiniteScroll(
         scrollContainerRef as React.RefObject<HTMLDivElement>,

@@ -1,5 +1,11 @@
 import { useEffect, useRef, useCallback, useMemo } from 'react';
-import { VisibilityState, ColumnSizingState, Table, Column } from '@tanstack/react-table';
+import {
+    VisibilityState,
+    ColumnSizingState,
+    Table,
+    Column,
+    InitialTableState,
+} from '@tanstack/react-table';
 import { isEqual } from 'lodash-es';
 
 // Special columns that should not be reordered by users
@@ -49,6 +55,150 @@ const createColumnSignature = (column: Column<any, unknown>) => {
     return JSON.stringify(metadata);
 };
 
+// Utility function to synchronously load saved table config and merge with initial state
+export const getInitialTableStateWithPersistedConfig = (
+    tableConfigKey?: string,
+    enableTableConfigPersistence?: boolean,
+    baseInitialState?: Partial<InitialTableState>,
+    allColumns?: Column<any>[],
+): Partial<InitialTableState> => {
+    if (!enableTableConfigPersistence || !tableConfigKey) {
+        return baseInitialState || {};
+    }
+
+    try {
+        const savedConfig = localStorage.getItem(`table-config-${tableConfigKey}`);
+        if (!savedConfig) {
+            return baseInitialState || {};
+        }
+
+        const config = JSON.parse(savedConfig);
+
+        // If we don't have columns info yet, just return base state
+        if (!allColumns || allColumns.length === 0) {
+            return baseInitialState || {};
+        }
+
+        // Create column signatures for validation
+        const columnSignaturesMap: Record<string, string> = {};
+        allColumns.forEach((col) => {
+            columnSignaturesMap[col.id] = createColumnSignature(col);
+        });
+
+        const allColumnIds = allColumns.map((col) => col.id);
+
+        // Create a set of valid columns by comparing signatures
+        const validColumns = new Set<string>();
+
+        // If we have column signatures stored, validate each column
+        if (config.columnSignatures) {
+            Object.entries(config.columnSignatures).forEach(([colId, signature]) => {
+                if (columnSignaturesMap[colId] && columnSignaturesMap[colId] === signature) {
+                    validColumns.add(colId);
+                }
+            });
+        } else {
+            // For backward compatibility, if no signatures stored, just use all current columns
+            allColumnIds.forEach((id) => validColumns.add(id));
+        }
+
+        // TEMPORARY: If no valid columns, try using all columns (bypass signature validation)
+        if (validColumns.size === 0) {
+            allColumnIds.forEach((id) => validColumns.add(id));
+        }
+
+        const mergedState: Partial<InitialTableState> = { ...baseInitialState };
+
+        // Note: We're not restoring pagination state as it's typically session-specific
+        // Only restore column-related state that should persist
+
+        // Merge column visibility
+        if (config.columnVisibility) {
+            const validatedVisibility = Object.entries(config.columnVisibility)
+                .filter(([colId]) => validColumns.has(colId))
+                .reduce<VisibilityState>((acc, [colId, isVisible]) => {
+                    acc[colId] = isVisible as boolean;
+                    return acc;
+                }, {});
+
+            if (Object.keys(validatedVisibility).length > 0) {
+                mergedState.columnVisibility = {
+                    ...baseInitialState?.columnVisibility,
+                    ...validatedVisibility,
+                };
+            }
+        }
+
+        // Merge column order
+        if (config.columnOrder) {
+            const savedOrderWithoutSpecialCols = config.columnOrder.filter(
+                (colId: string) => !SPECIAL_COLUMNS.includes(colId as any),
+            );
+
+            const validatedOrder = savedOrderWithoutSpecialCols.filter((colId: string) =>
+                validColumns.has(colId),
+            );
+
+            if (validatedOrder.length > 0) {
+                const existingSpecialColumns: string[] = [];
+                if (allColumnIds.includes('react-table-row-expand')) {
+                    existingSpecialColumns.push('react-table-row-expand');
+                }
+                if (allColumnIds.includes('react-table-row-select')) {
+                    existingSpecialColumns.push('react-table-row-select');
+                }
+
+                const reorderableColumns = validatedOrder.filter(
+                    (colId: string) => !SPECIAL_COLUMNS.includes(colId as any),
+                );
+
+                mergedState.columnOrder = [...existingSpecialColumns, ...reorderableColumns];
+            }
+        }
+
+        // Merge column sizing
+        if (config.columnSizing) {
+            const validatedSizing = Object.entries(config.columnSizing)
+                .filter(([colId]) => validColumns.has(colId))
+                .reduce<ColumnSizingState>((acc, [colId, size]) => {
+                    acc[colId] = size as number;
+                    return acc;
+                }, {});
+
+            if (Object.keys(validatedSizing).length > 0) {
+                mergedState.columnSizing = {
+                    ...baseInitialState?.columnSizing,
+                    ...validatedSizing,
+                };
+            }
+        }
+
+        // Merge column pinning
+        if (config.columnPinning) {
+            const validatedPinning = { left: [], right: [] };
+
+            if (Array.isArray(config.columnPinning.left)) {
+                validatedPinning.left = config.columnPinning.left.filter((colId: string) =>
+                    validColumns.has(colId),
+                );
+            }
+
+            if (Array.isArray(config.columnPinning.right)) {
+                validatedPinning.right = config.columnPinning.right.filter((colId: string) =>
+                    validColumns.has(colId),
+                );
+            }
+
+            mergedState.columnPinning = validatedPinning;
+        }
+
+        return mergedState;
+    } catch (error) {
+        console.error('Error loading persisted table configuration:', error);
+        return baseInitialState || {};
+    }
+};
+
 export const useTableConfigPersistence = ({
     tableConfigKey,
     enableTableConfigPersistence,
@@ -57,6 +207,7 @@ export const useTableConfigPersistence = ({
 }: UseTableConfigPersistenceProps) => {
     const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
     const prevConfigRef = useRef<TableConfig | null>(null);
+    const isLoadingConfigRef = useRef<boolean>(false);
 
     // Memoize all leaf columns - will only change if table structure changes
     const allColumns = useMemo(() => table.getAllLeafColumns(), [table]);
@@ -69,34 +220,6 @@ export const useTableConfigPersistence = ({
         });
         return signatures;
     }, [allColumns]);
-
-    // Memoize column capabilities for efficient access
-    const columnCapabilities = useMemo(() => {
-        return {
-            canHideColumns: allColumns.some(
-                (col) =>
-                    col.getCanHide() === true ||
-                    (col.columnDef.enableHiding !== false && table.options.enableHiding !== false),
-            ),
-            canResizeColumns: allColumns.some(
-                (col) =>
-                    col.getCanResize() === true ||
-                    (col.columnDef.enableResizing !== false &&
-                        table.options.enableColumnResizing !== false),
-            ),
-            canPinColumns: allColumns.some(
-                (col) =>
-                    col.getCanPin() === true ||
-                    (col.columnDef.enablePinning !== false &&
-                        table.options.enableColumnPinning !== false),
-            ),
-        };
-    }, [
-        allColumns,
-        table.options.enableHiding,
-        table.options.enableColumnResizing,
-        table.options.enableColumnPinning,
-    ]);
 
     // Function to get current table config
     const getCurrentTableConfig = useCallback(() => {
@@ -114,145 +237,6 @@ export const useTableConfigPersistence = ({
             columnSignatures: columnSignaturesMap,
         };
     }, [table, columnSignaturesMap]);
-
-    // Load configuration on mount
-    const loadTableConfig = useCallback(() => {
-        if (!enableTableConfigPersistence || !tableConfigKey) return;
-
-        try {
-            const savedConfig = localStorage.getItem(`table-config-${tableConfigKey}`);
-            if (!savedConfig) return;
-
-            if (savedConfig) {
-                const config = JSON.parse(savedConfig);
-                const allColumnIds = allColumns.map((col) => col.id);
-
-                // Create a set of valid columns by comparing signatures
-                const validColumns = new Set<string>();
-
-                // If we have column signatures stored, validate each column
-                if (config.columnSignatures) {
-                    // For each column in the saved config
-                    Object.entries(config.columnSignatures).forEach(([colId, signature]) => {
-                        // If column still exists in current table
-                        if (columnSignaturesMap[colId]) {
-                            // Check if signature matches
-                            if (columnSignaturesMap[colId] === signature) {
-                                validColumns.add(colId);
-                            }
-                        }
-                    });
-                } else {
-                    // For backward compatibility, if no signatures stored, just use all current columns
-                    allColumnIds.forEach((id) => validColumns.add(id));
-                }
-
-                // TEMPORARY: If no valid columns, try using all columns (bypass signature validation)
-                if (validColumns.size === 0) {
-                    allColumnIds.forEach((id) => validColumns.add(id));
-                }
-
-                // Validate and apply saved column visibility if hiding is enabled
-                if (config.columnVisibility && columnCapabilities.canHideColumns) {
-                    const validatedVisibility = Object.entries(config.columnVisibility)
-                        .filter(([colId]) => validColumns.has(colId))
-                        .reduce<VisibilityState>((acc, [colId, isVisible]) => {
-                            acc[colId] = isVisible as boolean;
-                            return acc;
-                        }, {});
-
-                    if (Object.keys(validatedVisibility).length > 0) {
-                        table.setColumnVisibility(validatedVisibility);
-                    }
-                }
-
-                // Validate and apply saved column order if reordering is enabled
-                if (config.columnOrder) {
-                    // Filter out special columns from saved order (in case they were saved before our fix)
-                    const savedOrderWithoutSpecialCols = config.columnOrder.filter(
-                        (colId: string) => !SPECIAL_COLUMNS.includes(colId as any),
-                    );
-
-                    const validatedOrder = savedOrderWithoutSpecialCols.filter((colId: string) =>
-                        validColumns.has(colId),
-                    );
-
-                    // Only apply if we have valid columns
-                    if (validatedOrder.length > 0) {
-                        // Preserve expand and select columns in their fixed positions
-                        // Based on useEnhancedColumns: select is added first (unshift), then expand (unshift)
-                        // So the correct order should be: expand, select, ...other columns
-                        const allColumnIds = table.getAllLeafColumns().map((col) => col.id);
-                        // Get special columns that actually exist in the table (in their correct order)
-                        // The correct order is: expand first, then select (based on unshift order in useEnhancedColumns)
-                        const existingSpecialColumns: string[] = [];
-                        if (allColumnIds.includes('react-table-row-expand')) {
-                            existingSpecialColumns.push('react-table-row-expand');
-                        }
-                        if (allColumnIds.includes('react-table-row-select')) {
-                            existingSpecialColumns.push('react-table-row-select');
-                        }
-
-                        // Filter out special columns from the validated order (user shouldn't be able to reorder them)
-                        const reorderableColumns = validatedOrder.filter(
-                            (colId: string) => !SPECIAL_COLUMNS.includes(colId as any),
-                        );
-
-                        // Combine: special columns first (in correct order), then user-reorderable columns
-                        const finalOrder = [...existingSpecialColumns, ...reorderableColumns];
-
-                        table.setColumnOrder(finalOrder);
-                    }
-                }
-
-                // Validate and apply saved column sizing if resizing is enabled
-                if (config.columnSizing && columnCapabilities.canResizeColumns) {
-                    const validatedSizing = Object.entries(config.columnSizing)
-                        .filter(([colId]) => validColumns.has(colId))
-                        .reduce<ColumnSizingState>((acc, [colId, size]) => {
-                            acc[colId] = size as number;
-                            return acc;
-                        }, {});
-
-                    if (Object.keys(validatedSizing).length > 0) {
-                        table.setColumnSizing(validatedSizing);
-                    }
-                }
-
-                // Validate and apply saved column pinning if pinning is enabled
-                if (config.columnPinning && columnCapabilities.canPinColumns) {
-                    const validatedPinning = { left: [], right: [] };
-
-                    if (Array.isArray(config.columnPinning.left)) {
-                        validatedPinning.left = config.columnPinning.left.filter((colId: string) =>
-                            validColumns.has(colId),
-                        );
-                    }
-
-                    if (Array.isArray(config.columnPinning.right)) {
-                        validatedPinning.right = config.columnPinning.right.filter(
-                            (colId: string) => validColumns.has(colId),
-                        );
-                    }
-
-                    table.setColumnPinning(validatedPinning);
-                }
-            }
-
-            // Save current config as previous for comparison
-            prevConfigRef.current = getCurrentTableConfig();
-        } catch (error) {
-            console.error('Error loading table configuration:', error);
-        }
-    }, [
-        enableTableConfigPersistence,
-        tableConfigKey,
-        allColumns,
-        columnSignaturesMap,
-        columnCapabilities,
-        table,
-        getCurrentTableConfig,
-    ]);
 
     // Save configuration function
     const saveTableConfig = useCallback(() => {
@@ -278,6 +262,11 @@ export const useTableConfigPersistence = ({
 
     // Debounced save function
     const debouncedSave = useCallback(() => {
+        // Don't save if we're currently loading config to prevent circular updates
+        if (isLoadingConfigRef.current) {
+            return;
+        }
+
         if (debounceTimerRef.current) {
             clearTimeout(debounceTimerRef.current);
         }
@@ -288,18 +277,20 @@ export const useTableConfigPersistence = ({
         }, debounceTime);
     }, [debounceTime, saveTableConfig]);
 
-    // Load config on mount
+    // NOTE: Config loading is now handled synchronously during initial render
+    // This effect just handles cleanup
     useEffect(() => {
         if (!enableTableConfigPersistence || !tableConfigKey) return;
 
-        loadTableConfig();
+        // Set the initial previous config to avoid immediate saves on mount
+        prevConfigRef.current = getCurrentTableConfig();
 
         return () => {
             if (debounceTimerRef.current) {
                 clearTimeout(debounceTimerRef.current);
             }
         };
-    }, [enableTableConfigPersistence, tableConfigKey, loadTableConfig]);
+    }, [enableTableConfigPersistence, tableConfigKey, getCurrentTableConfig]);
 
     // Watch for column visibility changes
     useEffect(() => {

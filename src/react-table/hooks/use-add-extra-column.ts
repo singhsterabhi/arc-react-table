@@ -1,5 +1,5 @@
 import { Table } from '@tanstack/react-table';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { debounce } from 'lodash-es';
 
 /**
@@ -9,7 +9,6 @@ import { debounce } from 'lodash-es';
  * @returns Boolean state indicating whether to add an extra column.
  */
 export const useAddExtraColumn = <T extends object>(table: Table<T>, threshold = 5) => {
-    const [addExtraColumn, setAddExtraColumn] = useState(true);
     const resizeObserverRef = useRef<ResizeObserver | null>(null);
     const scrollContainerRef = table?.options.meta?.scrollContainerRef;
 
@@ -19,24 +18,35 @@ export const useAddExtraColumn = <T extends object>(table: Table<T>, threshold =
     const columnVisibility = table.options.state.columnVisibility;
     const visibleColumnsLength = table.getVisibleLeafColumns().length;
 
-    // Memoize table width calculation
-    const getTableWidth = useCallback(() => {
+    // Calculate whether to add extra column synchronously using useMemo
+    const addExtraColumn = useMemo(() => {
+        if (!scrollContainerRef?.current) return false;
+
         const leftSize = table.getLeftTotalSize() ?? 0;
         const centerSize = table.getCenterTotalSize() ?? 0;
         const rightSize = table.getRightTotalSize() ?? 0;
-        return leftSize + centerSize + rightSize;
-    }, [table]);
-
-    // Memoize the calculation function
-    const updateExtraColumn = useCallback(() => {
-        if (!scrollContainerRef?.current) return;
-
-        const totalTableWidth = getTableWidth();
+        const totalTableWidth = leftSize + centerSize + rightSize;
         const containerWidth = scrollContainerRef.current.offsetWidth || 0;
 
         // Add buffer threshold to prevent flickering when widths are very close
-        setAddExtraColumn(totalTableWidth < containerWidth - threshold);
-    }, [getTableWidth, scrollContainerRef, threshold]);
+        return totalTableWidth < containerWidth - threshold;
+    }, [
+        table,
+        scrollContainerRef,
+        threshold,
+        columnSizing,
+        columnPinning,
+        columnVisibility,
+        visibleColumnsLength,
+    ]);
+
+    // Store the current calculation in a ref for resize observer
+    const currentAddExtraColumn = useRef(addExtraColumn);
+    currentAddExtraColumn.current = addExtraColumn;
+
+    // Create state for triggering re-renders when container resizes
+    const [, forceUpdate] = useState({});
+    const triggerUpdate = useCallback(() => forceUpdate({}), []);
 
     // Handle resize observer setup and cleanup
     useEffect(() => {
@@ -50,7 +60,7 @@ export const useAddExtraColumn = <T extends object>(table: Table<T>, threshold =
 
         // Create debounced update function
         const debouncedUpdate = debounce(() => {
-            updateExtraColumn();
+            triggerUpdate();
         }, 100);
 
         try {
@@ -63,9 +73,6 @@ export const useAddExtraColumn = <T extends object>(table: Table<T>, threshold =
             console.error('Error initializing ResizeObserver:', error);
         }
 
-        // Initial calculation
-        updateExtraColumn();
-
         return () => {
             debouncedUpdate.cancel();
             if (resizeObserverRef.current) {
@@ -73,12 +80,7 @@ export const useAddExtraColumn = <T extends object>(table: Table<T>, threshold =
                 resizeObserverRef.current = null;
             }
         };
-    }, [scrollContainerRef, updateExtraColumn]);
-
-    // Handle table state changes
-    useEffect(() => {
-        updateExtraColumn();
-    }, [columnSizing, columnPinning, columnVisibility, visibleColumnsLength, updateExtraColumn]);
+    }, [scrollContainerRef, triggerUpdate]);
 
     return addExtraColumn;
 };
